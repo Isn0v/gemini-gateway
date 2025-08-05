@@ -1,0 +1,14 @@
+stages:
+  - build
+  - deploy
+
+build_server:
+  stage: build
+  script:
+    - docker build -t gemini-gateway/gemini-server ./app/server
+    - docker push gemini-gateway/gemini-server
+
+deploy_to_kube:
+  stage: deploy
+  script:
+    - kubectl apply -f ./infra/kubernetes/
