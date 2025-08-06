@@ -1,7 +1,7 @@
 import requests
 import json
 
-SERVER_URL = "http://localhost:8080/gemini" # В будущем заменится на адрес в Kubernetes
+SERVER_URL = f"http://gemini-gateway.local/gemini"
 
 def ask_gemini(prompt):
 	"""Отправляет запрос на сервер и получает ответ от Gemini."""
