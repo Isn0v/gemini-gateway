@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gemini-server-service
+  labels:
+    # Эта метка нужна Prometheus для автоматического обнаружения
+    app: gemini-server
+spec:
+  selector:
+    app: gemini-server # Направляет трафик на Поды с этой меткой
+  ports:
+    - protocol: TCP
+      port: 8080       # Порт, по которому сервис будет доступен внутри кластера
+      targetPort: 8080 # Порт на контейнере, куда направлять трафик
+  type: ClusterIP # Доступен только внутри кластера

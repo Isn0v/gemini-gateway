@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gemini-server-deployment
+  labels:
+    app: gemini-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gemini-server # Этот селектор связывает Deployment с Подами
+  template: # Это шаблон для создания Подов
+    metadata:
+      labels:
+        app: gemini-server # Эта метка будет на каждом Поде
+    spec:
+      containers:
+      - name: gemini-server
+        image: isnov/gemini-gateway:server
+        ports:
+        - containerPort: 8080
