@@ -1,7 +1,11 @@
 import requests
-import json
+import os
 
-SERVER_URL = f"http://gemini-gateway.local/gemini"
+connection_way = os.getenv("CONNECTION_WAY", "local").lower()
+
+SERVER_URL = f"http://localhost:8080/gemini"
+if connection_way == "cloud":
+  SERVER_URL = "http://gemini-gateway.local/gemini"
 
 def ask_gemini(prompt):
 	"""Отправляет запрос на сервер и получает ответ от Gemini."""
