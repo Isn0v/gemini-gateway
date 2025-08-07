@@ -1,0 +1,21 @@
+logstashConfig:
+  logstash.conf: |
+    # Вход: принимаем данные от Filebeat
+    input {
+      beats {
+        port => 5044
+      }
+    }
+    # Фильтр: разбираем JSON-логи
+    filter {
+      json {
+        source => "message"
+      }
+    }
+    # Вывод: отправляем данные в Elasticsearch
+    output {
+      elasticsearch {
+        hosts => ["http://elasticsearch-master:9200"]
+        index => "gemini-gateway-%{+YYYY.MM.dd}"
+      }
+    }
