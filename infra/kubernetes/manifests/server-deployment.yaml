@@ -12,7 +12,8 @@ spec:
   template: # Это шаблон для создания Подов
     metadata:
       labels:
-        app: gemini-server # Эта метка будет на каждом Поде
+        app: gemini-server
+        logging: "true"
     spec:
       containers:
       - name: gemini-server
