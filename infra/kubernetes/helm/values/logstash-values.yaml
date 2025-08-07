@@ -10,6 +10,7 @@ logstashConfig:
     filter {
       json {
         source => "message"
+        target => "parsed_message"
       }
     }
     # Вывод: отправляем данные в Elasticsearch
