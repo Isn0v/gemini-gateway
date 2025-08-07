@@ -18,5 +18,19 @@ spec:
       containers:
       - name: gemini-server
         image: isnov/gemini-gateway:server
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
+        env:
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: gemini-api-key-secret 
+              key: api-key
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
