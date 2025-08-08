@@ -1,2 +1,4 @@
 **/.env
+**/certs/server.*
+
 app/server/out
