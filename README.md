@@ -50,7 +50,7 @@ helm repo update
 
 cd $REPO_ROOT/infra/kubernetes/helm/values
 
-helm install prometheus prometheus-community/kube-prometheus-stack
+helm install prometheus prometheus-community/kube-prometheus-stack \
 --namespace monitoring  --create-namespace \
 -f prometheus-values.yaml 
 
@@ -97,21 +97,57 @@ echo "kibana-example.local $(minikube ip)" | sudo tee -a /etc/hosts
 
 ## Запуск клиента
 
-Все задеплоено. Тестируем:
+Все задеплоено. Тестируем промпты:
 
 ```bash
 sudo docker run -it --rm --network=host isnov/gemini-gateway:client
 ```
 
-И там пишите любые промпты.
+## TLS
 
-## Мониторинг и логирование
+Ради развлечения решил попробовать создать зашифрованное соединение к `Ingress`, ведущему на основной сервер.
 
-Заходим на хосты которые были написаны в коде и делаем что душе угодно
+Создаем самоподписанный сертфикат и ключ:
+
+```bash
+cd $REPO_ROOT/infra/kubernetes/manifests/server/certs
+
+openssl req -newkey rsa:2048 -nodes -keyout server.key -subj "/CN=gemini-gateway.local" -out server.csr
+
+openssl x509 -req -in server.csr -signkey server.key -out server.crt -days 365 -extfile san.cnf -extensions v3_req  
+```
+
+Создаем секрет и применяем новый ингресс манифест:
+
+```bash
+cd $REPO_ROOT/infra/kubernetes/manifests/server
+
+kubectl create secret tls gemini-server-tls \
+ --cert=certs/server.crt --key=certs/server.key                                                              
+
+kubectl apply -f server-ingress-tls.yaml 
+```
+
+После этих действий для [gemini-gateway.local](https://gemini-gateway.local) будет работать зашифрованное соединение.
+
+> **Примечание:** Поскольку сервер работает лишь на определенных эндпоинтах, переходить на него напрямую имеет смысл лишь для проверки соединения. Помимо этого, поскольку сертификат самоподписанный, браузер будет ругаться на безопасность соединения, что нас не особо волнует.
+
+## Результаты
+
+Если все получилось, следующие хосты должны работать:
+
+[gemini-gateway.local](http://gemini-gateway.local)
+
+[grafana.my-project.com](http://grafana.my-project.com)
+
+[kibana-example.local](http://kibana-example.local)
+
+> **Примечание:** Логин и пароль для Grafana и Kibana можно посмотреть в секретах.
+
+
 
 ## Дальнейшая работа
 
 1. Тудушки
 2. Хочется добавить возможность думающих ответов
 3. Добавить контекст в ответы. Сейча каждое сообщение - это сообщение без контекста.
-4. HTTPS соединение для `Ingress`?

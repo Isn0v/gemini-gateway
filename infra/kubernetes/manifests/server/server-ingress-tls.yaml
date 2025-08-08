@@ -1,0 +1,21 @@
+# gemini-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gemini-ingress
+spec:
+  tls:
+    - hosts: 
+      - gemini-gateway.local
+      secretName: gemini-server-tls
+  rules:
+  - host: gemini-gateway.local
+    http:
+      paths:
+      - path: /gemini
+        pathType: Prefix
+        backend:
+          service:
+            name: gemini-server-service
+            port:
+              number: 8080
