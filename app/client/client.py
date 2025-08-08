@@ -1,5 +1,9 @@
 import requests
 import os
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
 connection_way = os.getenv("CONNECTION_WAY", "local").lower()
 
@@ -10,7 +14,7 @@ if connection_way == "cloud":
 def ask_gemini(prompt):
 	"""Отправляет запрос на сервер и получает ответ от Gemini."""
 	try:
-		response = requests.post(SERVER_URL, json={"prompt": prompt})
+		response = requests.post(SERVER_URL, json={"prompt": prompt}, verify=False)
 		response.raise_for_status() # Проверка на ошибки HTTP
 		print("Ответ от Gemini:", response.json().get("response"))
 	except requests.exceptions.RequestException as e:
